@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GenAI 101 Training Portal</title>
+  <style>
+    :root {
+      --bg: #08111f;
+      --bg-2: #0d1730;
+      --panel: rgba(12, 22, 40, 0.92);
+      --panel-strong: rgba(16, 29, 50, 0.97);
+      --panel-soft: rgba(18, 37, 63, 0.88);
+      --text: #eef4ff;
+      --muted: #9eb1cb;
+      --line: rgba(115, 151, 206, 0.22);
+      --teal: #18c4d9;
+      --teal-2: #0f93bf;
+      --green: #2fd49f;
+      --green-soft: rgba(47, 212, 159, 0.12);
+      --amber: #ffb326;
+      --amber-soft: rgba(255, 179, 38, 0.12);
+      --red: #f26f88;
+      --red-soft: rgba(242, 111, 136, 0.12);
+      --blue-note: #8ad8ff;
+      --shadow: 0 24px 48px rgba(0,0,0,0.34);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --max: 1240px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Lexend Deca", Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(24,196,217,.08), transparent 28%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      line-height: 1.6;
+    }
+    .shell { max-width: var(--max); margin: 0 auto; padding: 28px 22px 70px; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      margin-bottom: 18px; color: var(--muted); font-size: .94rem;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--text); }
+    .brand-mark {
+      width: 24px; height: 24px; border-radius: 8px; position: relative;
+      border: 1px solid rgba(255,179,38,.45); background: rgba(255,179,38,.08);
+    }
+    .brand-mark::before {
+      content: ""; position: absolute; inset: 5px; border-radius: 5px;
+      border: 2px solid var(--amber); opacity: .8;
+    }
+    .banner {
+      display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px;
+      padding: 16px 18px; border-radius: 18px; border: 1px solid rgba(138,216,255,.18);
+      background: linear-gradient(180deg, rgba(15,27,46,.94), rgba(10,18,33,.98)); box-shadow: var(--shadow);
+    }
+    .banner-icon {
+      width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(24,196,217,.14); color: var(--blue-note); font-weight: 700; flex: 0 0 auto;
+    }
+    .banner strong { display: block; margin-bottom: 4px; font-size: .98rem; }
+    .banner p { margin: 0; color: var(--muted); font-size: .93rem; }
+    .hero {
+      position: relative; overflow: hidden; padding: 34px 30px; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(19,173,210,.92), rgba(13,93,146,.98));
+      border: 1px solid rgba(125,214,244,.2); box-shadow: var(--shadow); margin-bottom: 22px;
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; opacity: .30;
+      background-image:
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(60deg, rgba(255,255,255,.07) 1px, transparent 1px),
+        linear-gradient(-60deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 44px 44px; pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-kicker {
+      display: inline-block; margin-bottom: 10px; font-size: .78rem; text-transform: uppercase;
+      letter-spacing: .16em; color: rgba(255,255,255,.82);
+    }
+    h1 {
+      margin: 0 0 10px; font-size: clamp(2.3rem, 4.6vw, 4rem); line-height: 1.02;
+      letter-spacing: -.045em; max-width: 12ch;
+    }
+    .hero p { margin: 0; max-width: 60ch; font-size: 1.06rem; color: rgba(255,255,255,.92); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+      background: rgba(7,19,35,.22); border: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.92);
+      font-size: .82rem; letter-spacing: .03em;
+    }
+    .chip b { color: #fff; }
+    .executive-band {
+      display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 24px;
+    }
+    .executive-card, .panel {
+      border: 1px solid var(--line); box-shadow: var(--shadow);
+    }
+    .executive-card {
+      padding: 16px; border-radius: 16px; background: linear-gradient(180deg, rgba(13,25,44,.96), rgba(10,18,31,.98));
+    }
+    .executive-card span {
+      display: block; margin-bottom: 8px; font-size: .76rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted);
+    }
+    .executive-card strong { display: block; margin-bottom: 4px; font-size: 1rem; }
+    .executive-card p { margin: 0; color: var(--muted); font-size: .9rem; }
+    .layout {
+      display: grid; grid-template-columns: 275px minmax(0,1fr); gap: 22px; align-items: start;
+    }
+    .toc {
+      position: sticky; top: 18px; padding: 18px 16px; border-radius: 18px; background: var(--panel);
+      border: 1px solid var(--line); box-shadow: var(--shadow);
+    }
+    .toc h2 {
+      margin: 0 0 12px; font-size: .82rem; text-transform: uppercase; letter-spacing: .14em; color: var(--blue-note);
+    }
+    .toc ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+    .toc a { color: var(--muted); text-decoration: none; font-size: .93rem; }
+    .toc a:hover { color: var(--text); }
+    .main { display: grid; gap: 22px; }
+    .panel {
+      background: linear-gradient(180deg, var(--panel-strong), rgba(10,18,33,.98)); border-radius: var(--radius); padding: 22px;
+    }
+    .section-head {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px;
+    }
+    .section-head h2 { margin: 0; font-size: 1.55rem; line-height: 1.12; letter-spacing: -.03em; }
+    .section-tag { color: var(--blue-note); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+    h3 { margin: 0 0 8px; font-size: 1.08rem; letter-spacing: -.02em; }
+    p.subtle, .subtle { color: var(--muted); font-size: .95rem; }
+    .grid-2, .grid-3, .grid-4, .module-grid, .compare-grid, .quiz-grid, .cert-grid { display: grid; gap: 16px; }
+    .grid-2, .compare-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .module-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .quiz-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .feature, .step, .compare-box, .mini-card, .module-card, .takeaway-card, .quiz-card, .cert-card {
+      border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: rgba(255,255,255,.02);
+    }
+    .feature strong, .step strong, .compare-box strong, .mini-card strong, .module-card strong, .takeaway-card strong, .quiz-card strong, .cert-card strong {
+      display: block; margin-bottom: 5px; font-size: 1rem; color: var(--text);
+    }
+    .feature p, .step p, .compare-box p, .mini-card p, .module-card p, .takeaway-card p, .quiz-card p, .cert-card p, .definition p, .highlight p, .example-box p, .risk-check li, .question label { margin: 0; color: var(--muted); }
+    .check {
+      display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; border-radius: 999px;
+      background: rgba(47,212,159,.14); color: var(--green); font-weight: 700; margin-right: 10px; font-size: .9rem; vertical-align: top;
+    }
+    .definition {
+      border-left: 4px solid #65c5ff; background: linear-gradient(180deg, rgba(18,42,72,.92), rgba(13,27,46,.96));
+      border-radius: 14px; padding: 18px;
+    }
+    .eyebrow {
+      display: inline-block; margin-bottom: 8px; font-size: .72rem; text-transform: uppercase; letter-spacing: .14em; color: #91d6ff;
+    }
+    .definition h3 { font-size: 1.34rem; }
+    .compare-good { background: linear-gradient(180deg, rgba(15,66,58,.95), rgba(12,47,43,.98)); border-color: rgba(47,212,159,.28); }
+    .compare-bad { background: linear-gradient(180deg, rgba(69,23,41,.96), rgba(46,15,28,.98)); border-color: rgba(242,111,136,.32); }
+    .compare-box ul, .highlight ul, .risk-check ul, .module-card ul, .takeaway-card ul { margin: 10px 0 0 20px; padding: 0; }
+    .compare-box li, .highlight li, .risk-check li, .module-card li, .takeaway-card li { margin-bottom: 8px; }
+    .example-box {
+      border-radius: 16px; padding: 18px; background: linear-gradient(135deg, rgba(16,53,81,.96), rgba(10,26,46,.98)); border: 1px solid rgba(24,196,217,.26);
+    }
+    .label { display: inline-block; margin-bottom: 8px; font-size: .78rem; color: var(--blue-note); letter-spacing: .12em; text-transform: uppercase; }
+    .code-block {
+      background: rgba(7,14,24,.95); border: 1px solid rgba(118,167,219,.18); border-radius: 12px; padding: 14px 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #f1f5fb; font-size: .94rem; line-height: 1.55; white-space: pre-wrap;
+    }
+    .generated-note, .verified-note, .warning-note, .success-note {
+      margin-top: 10px; padding: 12px 14px; border-radius: 12px; font-size: .93rem; border: 1px solid var(--line);
+    }
+    .generated-note { background: rgba(24,54,83,.45); border-color: rgba(101,197,255,.22); color: #d8efff; }
+    .verified-note { background: rgba(20,77,60,.35); border-color: rgba(47,212,159,.28); color: #c6f8e6; }
+    .warning-note { background: rgba(95,64,14,.32); border-color: rgba(255,179,38,.35); color: #ffe3a7; }
+    .success-note { background: rgba(15,66,58,.35); border-color: rgba(47,212,159,.28); color: #d5fff0; }
+    .highlight {
+      background: linear-gradient(180deg, rgba(64,50,25,.96), rgba(43,33,19,.99)); border: 1px solid rgba(255,179,38,.56);
+      box-shadow: inset 0 0 0 1px rgba(255,179,38,.1), var(--shadow); border-radius: 18px; padding: 20px;
+    }
+    .highlight h2 { margin: 0; color: #ffe1a0; }
+    .risk-check {
+      margin-top: 14px; border-radius: 14px; padding: 16px; background: rgba(9,18,30,.45); border: 1px dashed rgba(255,179,38,.3);
+    }
+    .module-card {
+      background: linear-gradient(180deg, rgba(14,24,42,.98), rgba(9,16,29,1));
+    }
+    .module-card .module-kicker {
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; background: rgba(24,196,217,.14);
+      color: var(--blue-note); font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px;
+    }
+    .module-card h3 { font-size: 1.32rem; margin-bottom: 10px; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .badge {
+      display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: .78rem; color: var(--muted);
+      background: rgba(255,255,255,.02);
+    }
+    .table-like {
+      border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-top: 12px;
+    }
+    .table-row {
+      display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; gap: 0; border-top: 1px solid rgba(115,151,206,.12);
+    }
+    .table-row:first-child { border-top: none; background: rgba(255,255,255,.03); }
+    .table-row div { padding: 10px 12px; font-size: .9rem; }
+    .key-points {
+      display: grid; gap: 12px; margin-top: 12px;
+    }
+    .takeaway-card {
+      background: linear-gradient(180deg, rgba(13, 56, 51, .95), rgba(10, 40, 38, .98)); border-color: rgba(47,212,159,.28);
+    }
+    .question { display: grid; gap: 10px; }
+    .question label {
+      display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); cursor: pointer;
+      background: rgba(255,255,255,.02);
+    }
+    .question input { margin-top: 3px; }
+    .quiz-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    button {
+      border: none; border-radius: 12px; padding: 14px 18px; font-family: inherit; font-size: .95rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-primary { background: linear-gradient(180deg, #ffb53d, #ff9f19); color: #241d12; box-shadow: 0 10px 24px rgba(255,179,38,.24); }
+    .btn-secondary { background: linear-gradient(180deg, #2a405f, #1b2d49); color: var(--text); border: 1px solid var(--line); }
+    .result-box {
+      margin-top: 18px; padding: 16px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.02);
+    }
+    .score-pill {
+      display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 999px; font-size: .9rem; font-weight: 700; margin-bottom: 12px;
+      background: rgba(24,196,217,.12); color: #b9efff; border: 1px solid rgba(24,196,217,.26);
+    }
+    .certificate {
+      margin-top: 18px; border-radius: 22px; padding: 26px; background:
+        linear-gradient(180deg, rgba(14, 22, 38, .98), rgba(10, 16, 28, 1));
+      border: 1px solid rgba(255,179,38,.28); box-shadow: var(--shadow); position: relative; overflow: hidden;
+    }
+    .certificate::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .22;
+      background: radial-gradient(circle at top right, rgba(255,179,38,.22), transparent 24%);
+    }
+    .certificate-inner { position: relative; z-index: 1; }
+    .certificate h3 { font-size: 1.7rem; margin-bottom: 4px; }
+    .certificate .name {
+      font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: -.03em; margin: 14px 0 8px; color: #fff;
+    }
+    .certificate .fine { color: var(--muted); font-size: .94rem; }
+    .signature-row {
+      display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; margin-top: 22px;
+    }
+    .signature {
+      padding-top: 10px; border-top: 1px solid rgba(255,255,255,.18); color: var(--muted); font-size: .88rem;
+    }
+    .footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 2px 0; color: var(--muted); font-size: .9rem;
+    }
+    .footer .right { text-align: right; color: #dbe4f5; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; }
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      .executive-band, .grid-4, .grid-3, .grid-2, .module-grid, .compare-grid, .quiz-grid, .signature-row, .table-row { grid-template-columns: 1fr; }
+      .section-head { flex-direction: column; align-items: flex-start; }
+      h1 { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>GenAI Training</span>
+      </div>
+      <div class="subtle">Enterprise learning portal rebuilt from uploaded module visuals</div>
+    </div>
+
+    <section class="banner">
+      <div class="banner-icon">i</div>
+      <div>
+        <strong>Enterprise learning standard</strong>
+        <p>This training portal has been reconstructed from image-based PDF modules. All references to the original company branding have been removed and replaced for a neutral internal-learning version.</p>
+      </div>
+    </section>
+
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-kicker">GenAI learning path • Foundations</span>
+        <h1>Welcome to GenAI 101</h1>
+        <p>Master the fundamentals of prompts, message structure, context handling, prompt quality, and applied AI decision-making in a premium internal training experience for ABC/XYZ Company.</p>
+        <div class="hero-meta">
+          <span class="chip"><b>Audience</b> All employees</span>
+          <span class="chip"><b>Modules</b> 7 learning units</span>
+          <span class="chip"><b>Format</b> Guided portal</span>
+          <span class="chip"><b>Certification</b> Included</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="executive-band">
+      <div class="executive-card">
+        <span>Outcome</span>
+        <strong>Safer AI usage</strong>
+        <p>Learn when to use GenAI, when to verify, and when to escalate.</p>
+      </div>
+      <div class="executive-card">
+        <span>Skill focus</span>
+        <strong>Prompt design</strong>
+        <p>Write clearer instructions, control output shape, and improve reliability.</p>
+      </div>
+      <div class="executive-card">
+        <span>Risk control</span>
+        <strong>Human review</strong>
+        <p>Treat model outputs as drafts unless a trusted source validates them.</p>
+      </div>
+      <div class="executive-card">
+        <span>Portal build</span>
+        <strong>B3 Consulting</strong>
+        <p>Branded for an enterprise-ready internal learning experience.</p>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#orientation">Module 0 • Orientation</a></li>
+          <li><a href="#overview">01 • Overview</a></li>
+          <li><a href="#anatomy">02 • Prompt Anatomy</a></li>
+          <li><a href="#history">03 • Message History</a></li>
+          <li><a href="#quality">04 • Prompt Quality</a></li>
+          <li><a href="#capstone">05 • Capstone</a></li>
+          <li><a href="#summary">06 • Summary</a></li>
+          <li><a href="#quiz">Knowledge quiz</a></li>
+          <li><a href="#certificate">Completion certificate</a></li>
+        </ul>
+      </aside>
+
+      <main class="main">
+        <section class="panel" id="orientation">
+          <div class="section-head">
+            <h2>Module 0 • Orientation</h2>
+            <span class="section-tag">Foundation</span>
+          </div>
+          <div class="grid-2">
+            <div>
+              <h3>What you'll learn</h3>
+              <div class="feature"><strong><span class="check">✓</span>How LLMs process and generate text</strong><p>Understand tokens, context windows, and predictive generation.</p></div>
+              <div class="feature"><strong><span class="check">✓</span>When to use them, and when not to</strong><p>Separate useful business tasks from risky or low-fit scenarios.</p></div>
+              <div class="feature"><strong><span class="check">✓</span>How to write reliable prompts</strong><p>Use instruction, context, format, and constraints intentionally.</p></div>
+              <div class="feature"><strong><span class="check">✓</span>How to use AI cost-effectively</strong><p>Reduce token waste and avoid avoidable rework.</p></div>
+            </div>
+            <div>
+              <div class="definition"><span class="eyebrow">Definition</span><h3>Generative AI</h3><p>Generative AI creates new outputs such as text, code, and media from learned patterns and user instructions.</p></div>
+              <div class="definition" style="margin-top:14px;"><span class="eyebrow">Definition</span><h3>Large Language Model (LLM)</h3><p>An LLM predicts likely next tokens to create responses that feel fluent and useful, but it does not automatically verify truth.</p></div>
+              <div class="definition" style="margin-top:14px;"><span class="eyebrow">Definition</span><h3>Prompt</h3><p>A prompt is the full instruction package sent to the model, including the task, context, examples, constraints, and expected output format.</p></div>
+            </div>
+          </div>
+          <div class="compare-grid" style="margin-top:16px;">
+            <div class="compare-box compare-good">
+              <strong>What LLMs do</strong>
+              <ul>
+                <li>Summarize and transform text</li>
+                <li>Follow clear instructions</li>
+                <li>Draft content and documentation</li>
+                <li>Extract and restructure information</li>
+              </ul>
+            </div>
+            <div class="compare-box compare-bad">
+              <strong>What LLMs do not do reliably</strong>
+              <ul>
+                <li>Act as a trusted system of record</li>
+                <li>Guarantee factual accuracy without checks</li>
+                <li>Handle every business situation safely on their own</li>
+                <li>Understand hidden business context unless provided</li>
+              </ul>
+            </div>
+          </div>
+          <div class="example-box" style="margin-top:16px;">
+            <span class="label">Prompt and response example</span>
+            <div class="code-block">PROMPT:
+Summarize this service record in 2 sentences:
+[Customer reported intermittent stalling issue affecting daily commute. Technician diagnosed fuel pump failure through pressure testing. Replaced fuel pump assembly, performed test drive, confirmed issue resolved.]</div>
+            <div class="generated-note">The model can produce a clean summary from this prompt, but it is generating from what it was given — not independently confirming the record.</div>
+          </div>
+          <div class="highlight" style="margin-top:16px;">
+            <div class="section-head"><h2>Why this matters at ABC/XYZ Company</h2><span class="section-tag">Business relevance</span></div>
+            <p>GenAI can improve efficiency across internal knowledge work, customer support, documentation, analysis, and workflow assistance. It still requires human judgment when quality, accuracy, or policy matters.</p>
+            <ul>
+              <li>Token costs rise when prompts are inefficient</li>
+              <li>Hallucinations can create operational and reputational risk</li>
+              <li>Poor prompt design causes inconsistent outcomes</li>
+              <li>Missing context often produces weak recommendations</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel" id="overview">
+          <div class="section-head">
+            <h2>01 • Overview</h2>
+            <span class="section-tag">Learning objectives</span>
+          </div>
+          <div class="module-card">
+            <span class="module-kicker">Prompt Basics • Overview</span>
+            <h3>Why prompt structure matters</h3>
+            <p>This section introduces the key idea that prompts are more than requests. They are structured instructions that shape reliability, consistency, usefulness, and cost.</p>
+            <ul>
+              <li>Understand the difference between system prompts and user prompts</li>
+              <li>See how messages are structured in a model interaction</li>
+              <li>Learn when each kind of prompt is most useful</li>
+              <li>Recognize the impact of clear instructions on output quality</li>
+            </ul>
+            <div class="warning-note">Real-world impact: if you are not precise about what the output should look like, the result becomes harder to trust or operationalize.</div>
+            <div class="success-note">Ready-to-practice mindset: the next modules show how structure changes output quality in measurable ways.</div>
+          </div>
+        </section>
+
+        <section class="panel" id="anatomy">
+          <div class="section-head">
+            <h2>02 • Prompt Anatomy</h2>
+            <span class="section-tag">Mechanics</span>
+          </div>
+          <div class="grid-2">
+            <div class="definition"><span class="eyebrow">Definition</span><h3>System Prompt</h3><p>The system prompt sets the role, behavior, tone, rules, boundaries, and output expectations that should stay constant across requests.</p></div>
+            <div class="definition"><span class="eyebrow">Definition</span><h3>User Prompt</h3><p>The user prompt provides the specific task, question, input data, and immediate objective for the current interaction.</p></div>
+          </div>
+          <div class="example-box" style="margin-top:16px;">
+            <span class="label">What gets sent to the model</span>
+            <div class="code-block">{
+  "system": "You are an ABC/XYZ Company inventory analyst...",
+  "messages": [
+    { "role": "user", "content": "Analyze this aging report..." }
+  ],
+  "max_tokens": 4000
+}</div>
+            <div class="verified-note">Key point: the system field is separate from the conversation messages. Messages usually contain user and assistant turns.</div>
+          </div>
+          <div class="compare-grid" style="margin-top:16px;">
+            <div class="compare-box compare-good">
+              <strong>With a system prompt</strong>
+              <p>The model follows a defined role, consistent categories, and expected format more reliably.</p>
+            </div>
+            <div class="compare-box compare-bad">
+              <strong>Without a system prompt</strong>
+              <p>The model may still respond, but categories, format, and analytical boundaries become less predictable.</p>
+            </div>
+          </div>
+          <div class="takeaway-card" style="margin-top:16px;">
+            <strong>Key points</strong>
+            <ul>
+              <li>Structured prompts with clear instructions produce more reliable results</li>
+              <li>Separating rules from tasks makes prompt behavior easier to manage</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel" id="history">
+          <div class="section-head">
+            <h2>03 • Message History</h2>
+            <span class="section-tag">Context and cost</span>
+          </div>
+          <div class="example-box">
+            <span class="label">How message history works</span>
+            <div class="code-block">Turn 1: [system, user] + response
+Turn 2: [system, user, assistant, user] + response
+Turn 3: [system, user, assistant, user, assistant, user] + response</div>
+            <div class="generated-note">Each new turn carries prior visible conversation forward unless the system is designed differently.</div>
+          </div>
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="module-card">
+              <strong>What end users usually see</strong>
+              <ul>
+                <li>Current message</li>
+                <li>Conversation history</li>
+                <li>Uploaded files</li>
+              </ul>
+            </div>
+            <div class="module-card">
+              <strong>What may also influence responses</strong>
+              <ul>
+                <li>System prompts</li>
+                <li>Tool instructions</li>
+                <li>Retrieved context</li>
+                <li>Safety controls and policy layers</li>
+              </ul>
+            </div>
+          </div>
+          <div class="highlight" style="margin-top:16px;">
+            <div class="section-head"><h2>Why this matters</h2><span class="section-tag">Operational effect</span></div>
+            <div class="grid-3">
+              <div class="mini-card"><strong>Token costs multiply</strong><p>Longer conversations resend more content and increase cost per turn.</p></div>
+              <div class="mini-card"><strong>Context windows fill up</strong><p>Long sessions eventually need summarization, truncation, or reset strategies.</p></div>
+              <div class="mini-card"><strong>Earlier context shapes later responses</strong><p>Previous instructions and hidden context can influence later answers.</p></div>
+            </div>
+          </div>
+          <div class="compare-grid" style="margin-top:16px;">
+            <div class="compare-box compare-good">
+              <strong>Single-turn requests</strong>
+              <ul>
+                <li>Lower token cost</li>
+                <li>Independent and easier to parallelize</li>
+                <li>Best for repeated record-by-record processing</li>
+              </ul>
+            </div>
+            <div class="compare-box compare-bad">
+              <strong>Multi-turn conversations</strong>
+              <ul>
+                <li>Richer context</li>
+                <li>Higher cost</li>
+                <li>Greater risk of long-context confusion</li>
+              </ul>
+            </div>
+          </div>
+          <div class="takeaway-card" style="margin-top:16px;">
+            <strong>Key takeaways</strong>
+            <ul>
+              <li>Multi-turn conversations are powerful but more expensive</li>
+              <li>Use single-turn requests when independence and low cost matter</li>
+              <li>Your visible prompt is only part of the model’s full context</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel" id="quality">
+          <div class="section-head">
+            <h2>04 • Prompt Quality</h2>
+            <span class="section-tag">Practical skill</span>
+          </div>
+          <div class="grid-3">
+            <div class="module-card">
+              <strong>1. Role framing</strong>
+              <p>Set expertise level and perspective using patterns like “You are...” or “I am...”.</p>
+            </div>
+            <div class="module-card">
+              <strong>2. Format specification</strong>
+              <p>Tell the model exactly how the output should be organized so it is easier to parse and reuse.</p>
+            </div>
+            <div class="module-card">
+              <strong>3. Context and constraints</strong>
+              <p>Give relevant business background and boundaries so the response stays on target.</p>
+            </div>
+          </div>
+          <div class="warning-note" style="margin-top:16px;">The same task can produce dramatically different results depending on how the prompt is framed.</div>
+          <div class="compare-grid" style="margin-top:16px;">
+            <div class="compare-box compare-good">
+              <strong>Good prompt</strong>
+              <div class="code-block">You are an ABC/XYZ Company inventory analyst. Focus only on vehicles over 60 days in inventory. Return:
+1) age category
+2) top 3 concerns
+3) one specific recommendation
+Use concise bullet points under 200 words.</div>
+            </div>
+            <div class="compare-box compare-bad">
+              <strong>Poor prompt</strong>
+              <div class="code-block">analyze this inventory</div>
+            </div>
+          </div>
+          <div class="table-like">
+            <div class="table-row"><div><strong>Dimension</strong></div><div><strong>Poor prompt</strong></div><div><strong>Good prompt</strong></div><div><strong>Why it matters</strong></div></div>
+            <div class="table-row"><div>Token efficiency</div><div>Often wastes turns</div><div>Usually more direct</div><div>Better prompts often reduce rework</div></div>
+            <div class="table-row"><div>Structure</div><div>Varies unpredictably</div><div>Consistent and reusable</div><div>Useful for business workflows</div></div>
+            <div class="table-row"><div>Actionability</div><div>Generic insight</div><div>Specific recommendations</div><div>Improves decision usefulness</div></div>
+          </div>
+          <div class="takeaway-card" style="margin-top:16px;">
+            <strong>Key insight</strong>
+            <ul>
+              <li>Role framing helps the model understand perspective</li>
+              <li>Format specification improves consistency</li>
+              <li>Context and constraints focus the answer on what matters most</li>
+              <li>Better prompts often produce better results with fewer wasted turns</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel" id="capstone">
+          <div class="section-head">
+            <h2>05 • Capstone</h2>
+            <span class="section-tag">Applied exercise</span>
+          </div>
+          <div class="module-card">
+            <span class="module-kicker">Capstone</span>
+            <h3>Apply what you've learned</h3>
+            <p>Your capstone challenge is to write both a system prompt and a user prompt that together analyze a large vehicle inventory dataset, identify the 10 least-likely-to-sell vehicles, and return a structured result with reasoning.</p>
+            <div class="badge-row">
+              <span class="badge">System prompt required</span>
+              <span class="badge">User prompt required</span>
+              <span class="badge">Structured table expected</span>
+              <span class="badge">Reasoning required</span>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="example-box">
+              <span class="label">Weak capstone attempt</span>
+              <div class="code-block">System: you are an auto analyst
+User: give me the summary of top 10 vehicles</div>
+              <div class="warning-note">This is too vague and does not clearly specify “least-likely-to-sell,” format requirements, or evaluation criteria.</div>
+            </div>
+            <div class="example-box">
+              <span class="label">Stronger capstone direction</span>
+              <div class="code-block">System: You are an ABC/XYZ Company inventory analyst. Identify slow-moving inventory using days in inventory, condition, price point, and likely marketability. Return a markdown table with VIN, year, make, model, trim, price, days in inventory, and reasoning.
+
+User: Analyze the 100-vehicle inventory dataset. Identify the 10 least-likely-to-sell vehicles and provide one action recommendation for each.</div>
+              <div class="verified-note">This version better defines role, output format, ranking objective, and decision criteria.</div>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="takeaway-card">
+              <strong>Things you did well when prompts are strong</strong>
+              <ul>
+                <li>Separate rules from the task</li>
+                <li>Clarify the business objective</li>
+                <li>Use concise and structured instructions</li>
+              </ul>
+            </div>
+            <div class="takeaway-card" style="background: linear-gradient(180deg, rgba(65,50,19,.95), rgba(49,37,18,.98)); border-color: rgba(255,179,38,.34);">
+              <strong>Things to consider next time</strong>
+              <ul>
+                <li>Specify exact output columns</li>
+                <li>Define ranking criteria explicitly</li>
+                <li>State whether reasoning should be short or detailed</li>
+                <li>Tell the model how to treat missing or conflicting data</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="summary">
+          <div class="section-head">
+            <h2>06 • Summary</h2>
+            <span class="section-tag">Reference guide</span>
+          </div>
+          <div class="takeaway-card">
+            <strong>Key takeaways</strong>
+            <ul>
+              <li>System prompts set rules and role; user prompts provide the task and data</li>
+              <li>Messages form an array and long history increases token cost</li>
+              <li>Prompt quality depends on role framing, format specification, and context plus constraints</li>
+              <li>Structured prompts are more predictable and easier to operationalize</li>
+              <li>Hidden context such as system instructions and tools can shape the response</li>
+            </ul>
+          </div>
+          <div class="compare-grid" style="margin-top:16px;">
+            <div class="definition">
+              <span class="eyebrow">System prompt</span>
+              <p><strong>Use for:</strong> role definition, output requirements, persistent rules, and tone consistency.</p>
+            </div>
+            <div class="definition">
+              <span class="eyebrow">User prompt</span>
+              <p><strong>Use for:</strong> specific tasks, live data, questions, and request-specific context.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="quiz">
+          <div class="section-head">
+            <h2>Knowledge Quiz</h2>
+            <span class="section-tag">Scored assessment</span>
+          </div>
+          <p class="subtle">Complete the quiz below. Your score will be calculated automatically, and your completion certificate will update using your name and email address.</p>
+          <div class="quiz-grid" id="quiz-form">
+            <div class="quiz-card question" data-answer="b">
+              <strong>1. What is the main job of a system prompt?</strong>
+              <label><input type="radio" name="q1" value="a"> Summarize the latest user message only</label>
+              <label><input type="radio" name="q1" value="b"> Set role, rules, and persistent behavior</label>
+              <label><input type="radio" name="q1" value="c"> Store data in a database</label>
+            </div>
+            <div class="quiz-card question" data-answer="c">
+              <strong>2. Why do long multi-turn chats cost more?</strong>
+              <label><input type="radio" name="q2" value="a"> The model charges by screen size</label>
+              <label><input type="radio" name="q2" value="b"> Because short answers are more expensive</label>
+              <label><input type="radio" name="q2" value="c"> The conversation history is resent across turns</label>
+            </div>
+            <div class="quiz-card question" data-answer="a">
+              <strong>3. Which prompt is stronger?</strong>
+              <label><input type="radio" name="q3" value="a"> “Return 3 bullet points for a sales manager, focusing on inventory over 60 days.”</label>
+              <label><input type="radio" name="q3" value="b"> “tell me stuff about this inventory”</label>
+              <label><input type="radio" name="q3" value="c"> “inventory”</label>
+            </div>
+            <div class="quiz-card question" data-answer="b">
+              <strong>4. Which item is often hidden from end users but still influences model output?</strong>
+              <label><input type="radio" name="q4" value="a"> Monitor brightness</label>
+              <label><input type="radio" name="q4" value="b"> System prompt and tool instructions</label>
+              <label><input type="radio" name="q4" value="c"> Keyboard type</label>
+            </div>
+            <div class="quiz-card question" data-answer="a">
+              <strong>5. What should you do with a high-impact factual output?</strong>
+              <label><input type="radio" name="q5" value="a"> Verify it against a trusted source</label>
+              <label><input type="radio" name="q5" value="b"> Assume it is correct if it sounds confident</label>
+              <label><input type="radio" name="q5" value="c"> Only shorten it</label>
+            </div>
+            <div class="quiz-card question" data-answer="c">
+              <strong>6. Why are context and constraints useful in prompts?</strong>
+              <label><input type="radio" name="q6" value="a"> They make the model slower on purpose</label>
+              <label><input type="radio" name="q6" value="b"> They hide the task from the user</label>
+              <label><input type="radio" name="q6" value="c"> They focus the response on relevant boundaries and priorities</label>
+            </div>
+            <div class="quiz-card question" data-answer="b">
+              <strong>7. Single-turn requests are usually best when...</strong>
+              <label><input type="radio" name="q7" value="a"> You need maximum conversational memory</label>
+              <label><input type="radio" name="q7" value="b"> Each task is independent and should stay cheaper</label>
+              <label><input type="radio" name="q7" value="c"> You want hidden context to expand automatically</label>
+            </div>
+            <div class="quiz-card question" data-answer="a">
+              <strong>8. A good capstone prompt should include...</strong>
+              <label><input type="radio" name="q8" value="a"> role, task, output format, and ranking criteria</label>
+              <label><input type="radio" name="q8" value="b"> only the words “analyze this”</label>
+              <label><input type="radio" name="q8" value="c"> no user data</label>
+            </div>
+          </div>
+          <div class="quiz-actions">
+            <button class="btn-primary" onclick="gradeQuiz()">Score quiz</button>
+            <button class="btn-secondary" onclick="resetQuiz()">Reset answers</button>
+          </div>
+          <div class="result-box" id="quiz-result">
+            <div class="score-pill">Awaiting completion</div>
+            <p>Your score will appear here after you complete the quiz.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="certificate">
+          <div class="section-head">
+            <h2>Completion Certificate</h2>
+            <span class="section-tag">Auto-filled</span>
+          </div>
+          <div class="certificate">
+            <div class="certificate-inner">
+              <div class="hero-kicker" style="margin-bottom:4px; color:#d8efff;">Certificate of completion</div>
+              <h3>GenAI 101 • Foundations</h3>
+              <p class="fine">This certifies that the learner named below completed the training portal and quiz assessment.</p>
+              <div class="name" id="cert-name">Kannan Rajan</div>
+              <div class="cert-grid grid-2" style="margin-top:14px;">
+                <div class="cert-card"><strong>First name</strong><p id="cert-first">Kannan</p></div>
+                <div class="cert-card"><strong>Last name</strong><p id="cert-last">Rajan</p></div>
+                <div class="cert-card"><strong>Email address</strong><p id="cert-email">sruthikannan1975@gmail.com</p></div>
+                <div class="cert-card"><strong>Assessment score</strong><p id="cert-score">Pending</p></div>
+              </div>
+              <div class="signature-row">
+                <div class="signature">Program: GenAI 101 Internal Learning Portal</div>
+                <div class="signature">Issued by: B3 Consulting</div>
+                <div class="signature">Status: <span id="cert-status">Awaiting score</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer">
+          <div>v1.0 &nbsp; GenAI Training Platform</div>
+          <div class="right">Powered by B3 Consulting</div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    function gradeQuiz() {
+      var questions = document.querySelectorAll('.question');
+      var correct = 0;
+      var answered = 0;
+
+      questions.forEach(function(question, index) {
+        var selected = question.querySelector('input:checked');
+        var answer = question.getAttribute('data-answer');
+        question.querySelectorAll('label').forEach(function(label) {
+          label.style.borderColor = 'rgba(115, 151, 206, 0.22)';
+          label.style.background = 'rgba(255,255,255,0.02)';
+        });
+
+        if (selected) {
+          answered += 1;
+          if (selected.value === answer) {
+            correct += 1;
+            selected.parentElement.style.borderColor = 'rgba(47,212,159,.45)';
+            selected.parentElement.style.background = 'rgba(47,212,159,.10)';
+          } else {
+            selected.parentElement.style.borderColor = 'rgba(242,111,136,.45)';
+            selected.parentElement.style.background = 'rgba(242,111,136,.10)';
+            var right = question.querySelector('input[value="' + answer + '"]');
+            if (right) {
+              right.parentElement.style.borderColor = 'rgba(47,212,159,.45)';
+              right.parentElement.style.background = 'rgba(47,212,159,.10)';
+            }
+          }
+        }
+      });
+
+      var total = questions.length;
+      var score = Math.round((correct / total) * 100);
+      var pass = score >= 70;
+      var result = document.getElementById('quiz-result');
+      result.innerHTML = '<div class="score-pill">Score: ' + score + '%</div>' +
+        '<p><strong>' + correct + ' of ' + total + '</strong> questions answered correctly.</p>' +
+        '<p>' + (pass ? 'Status: Passed. Your certificate has been updated below.' : 'Status: Not yet passed. Review the modules and try again.') + '</p>' +
+        '<p class="subtle">Answered: ' + answered + ' of ' + total + '</p>';
+
+      document.getElementById('cert-score').textContent = score + '%';
+      document.getElementById('cert-status').textContent = pass ? 'Passed' : 'Review required';
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('.question input').forEach(function(input) {
+        input.checked = false;
+      });
+      document.querySelectorAll('.question label').forEach(function(label) {
+        label.style.borderColor = 'rgba(115, 151, 206, 0.22)';
+        label.style.background = 'rgba(255,255,255,0.02)';
+      });
+      document.getElementById('quiz-result').innerHTML = '<div class="score-pill">Awaiting completion</div><p>Your score will appear here after you complete the quiz.</p>';
+      document.getElementById('cert-score').textContent = 'Pending';
+      document.getElementById('cert-status').textContent = 'Awaiting score';
+    }
+  </script>
+</body>
+</html>
