@@ -83,7 +83,7 @@ function exportTaskPlan(){const a=$('#agentA').value||'Agent A',b=$('#agentB').v
 const providers=[
 {id:'openai',name:'OpenAI',model:'gpt-5-mini',endpoint:'https://api.openai.com/v1/responses',key:'OpenAI API key',help:'Responses API; model access varies by account.'},
 {id:'gemini',name:'Google Gemini',model:'gemini-2.5-flash',endpoint:'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent',key:'Gemini API key',help:'generateContent; {model} is replaced automatically.'},
-{id:'groq',name:'Groq / Qwen',model:'qwen/qwen3-32b',endpoint:'https://api.groq.com/openai/v1/chat/completions',key:'Groq API key',help:'OpenAI-compatible endpoint with editable Qwen model ID.'}];
+{id:'groq',name:'Groq / Openai',model:'openai/gpt-oss-120b',endpoint:'https://api.groq.com/openai/v1/chat/completions',key:'Groq API key',help:'OpenAI-compatible endpoint with editable Groq model ID.'}];
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const state={controllers:new Map(),history:JSON.parse(sessionStorage.getItem('promptLabHistory')||'[]')};
 function setTheme(theme,save=true){const valid=['light','medium','dark'].includes(theme)?theme:'light';document.documentElement.dataset.theme=valid;$$('[data-theme-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.themeChoice===valid)));if(save)localStorage.setItem('promptLabTheme',valid)}
